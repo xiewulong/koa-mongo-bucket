@@ -1,0 +1,35 @@
+{
+  "name": "koa-mongo-bucket",
+  "version": "0.0.1",
+  "description": "Koa 2 mongo GridFS bucket instance",
+  "main": "index.js",
+  "scripts": {
+    "test": "node ./sample/app"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/xiewulong/koa-mongo-bucket.git"
+  },
+  "keywords": [
+    "koa",
+    "koa2",
+    "mongo",
+    "GridFS",
+    "api",
+    "bucket"
+  ],
+  "author": "xiewulong <xiewulong@vip.qq.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/xiewulong/koa-mongo-bucket/issues"
+  },
+  "homepage": "https://github.com/xiewulong/koa-mongo-bucket#readme",
+  "dependencies": {
+    "mongodb": "^3.0.1",
+    "uuid": "^3.1.0"
+  },
+  "devDependencies": {
+    "koa": "^2.4.1",
+    "koa-multer": "^1.0.2"
+  }
+}
