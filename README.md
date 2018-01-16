@@ -45,13 +45,14 @@ const multer = require('koa-multer');
 
 app
   // ...
-  .use(multer({dest: 'tmp/uploads'}).single('file'))
+  .use(multer({dest: 'tmp'}).single('file'))
   .use(async(ctx, next) => {
-    if(ctx.method == 'POST') {
-      return ctx.body = await ctx.mongo.bucket.upload(ctx.req.file.path, ctx.req.file.originalname);
+    if(ctx.method != 'POST') {
+      return ctx.body = '<form method="post" enctype="multipart/form-data"><input type="test" value="test" /><input type="file" name="file" /><button type="submit">Submit</button></form>';
     }
 
-    ctx.body = '<form method="post" enctype="multipart/form-data"><input type="test" value="test" /><input type="file" name="file" /><button type="submit">Submit</button></form>';
+    ctx.body = await ctx.mongo.bucket.upload(ctx.req.file.path, ctx.req.file.originalname);
+    fs.unlink(ctx.req.file.path, err => {});
   })
   // ...
   ;
