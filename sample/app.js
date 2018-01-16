@@ -18,7 +18,7 @@ const production = app.env === 'production';
 app
   .use(mongo({uri: process.env.APP_MONGO}))
   .use(mongo_bucket())
-  .use(multer({dest: 'tmp'}).single('file'))
+  .use(multer({dest: 'tmp/uploads'}).single('file'))
   .use(async (ctx, next) => {
     if(ctx.method == 'POST') {
       return ctx.body = await ctx.mongo.bucket.upload(ctx.req.file.path, ctx.req.file.originalname);

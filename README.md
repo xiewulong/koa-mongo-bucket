@@ -45,7 +45,7 @@ const multer = require('koa-multer');
 
 app
   // ...
-  .use(multer({dest: 'tmp'}).single('file'))
+  .use(multer({dest: 'tmp/uploads'}).single('file'))
   .use(async(ctx, next) => {
     if(ctx.method == 'POST') {
       return ctx.body = await ctx.mongo.bucket.upload(ctx.req.file.path, ctx.req.file.originalname);
