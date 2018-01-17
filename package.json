@@ -1,6 +1,6 @@
 {
   "name": "koa-mongo-bucket",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Koa 2 mongo GridFS bucket instance",
   "main": "index.js",
   "scripts": {

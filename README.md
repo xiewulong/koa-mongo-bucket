@@ -47,12 +47,24 @@ app
   // ...
   .use(multer({dest: 'tmp'}).single('file'))
   .use(async(ctx, next) => {
-    if(ctx.method != 'POST') {
-      return ctx.body = '<form method="post" enctype="multipart/form-data"><input type="test" value="test" /><input type="file" name="file" /><button type="submit">Submit</button></form>';
+    // Upload
+    if(ctx.method == 'POST') {
+      let file = await ctx.mongo.bucket.upload(ctx.req.file.path, ctx.req.file.originalname);
+      fs.unlink(ctx.req.file.path, err => {});
+
+      return ctx.redirect(`?id=${file._id}`);
     }
 
-    ctx.body = await ctx.mongo.bucket.upload(ctx.req.file.path, ctx.req.file.originalname);
-    fs.unlink(ctx.req.file.path, err => {});
+    // Select file
+    if(!ctx.query.id) {
+      return ctx.body = '<form method="post" enctype="multipart/form-data"><input type="file" name="file" /><button type="submit">Submit</button></form>';
+    }
+
+    // Rander image or download file
+    let file = await ctx.mongo.collection('fs.files').findOne({_id: mongo.ObjectId(ctx.query.id)});
+    ctx.type = file.filename;
+    (ctx.query.download || !/^image\/.*$/.test(ctx.type)) && ctx.attachment(file.filename);
+    ctx.body = await ctx.mongo.bucket.stream(file._id);
   })
   // ...
   ;

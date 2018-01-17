@@ -42,7 +42,6 @@ class Bucket {
     if(!filename) {
       filename = uuidv4().replace(/-/g, '');
     }
-
     return new Promise((resolve, reject) => {
       fs
         .createReadStream(file_path, fs_create_read_stream_options)
@@ -53,6 +52,15 @@ class Bucket {
     });
   }
 
+  /**
+   * Download
+   *
+   * @param {string} id
+   * @param {object} [bucket_open_download_stream_options]
+   * @param {string} file_path
+   * @param {object} [fs_create_write_stream_options]
+   * @return {promise}
+   */
   download(id, bucket_open_download_stream_options, file_path, fs_create_write_stream_options) {
     if(!id) {
       throw 'File id is required';
@@ -67,13 +75,24 @@ class Bucket {
     }
 
     return new Promise((resolve, reject) => {
-      this.bucket
-        .openDownloadStream(id, bucket_open_download_stream_options)
+      this
+        .stream(id, bucket_open_download_stream_options)
         .pipe(fs.createWriteStream(file_path, fs_create_write_stream_options))
         .on('finish', resolve)
         .on('error', reject)
         ;
     });
+  }
+
+  /**
+   * Stream
+   *
+   * @param {string} id
+   * @param {object} [bucket_open_download_stream_options]
+   * @return {stream}
+   */
+  stream(id, bucket_open_download_stream_options) {
+    return this.bucket.openDownloadStream(mongodb.ObjectId(id), bucket_open_download_stream_options);
   }
 
 }
