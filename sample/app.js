@@ -29,17 +29,25 @@ app
       return ctx.redirect(`?id=${file._id}`);
     }
 
-    // Rander image or download file
-    if(ctx.query.id) {
-      let file = await ctx.mongo.collection('fs.files').findOne({_id: mongo.ObjectId(ctx.query.id)});
-      ctx.type = file.filename;
-      (ctx.query.download || !/^image\/.*$/.test(ctx.type)) && ctx.attachment(file.filename);
-
-      return ctx.body = await ctx.mongo.bucket.stream(file._id);
+    // Select file
+    if(!ctx.query.id) {
+      return ctx.body = '<form method="post" enctype="multipart/form-data"><input type="file" name="file" /><button type="submit">Submit</button></form>';
     }
 
-    // Select file
-    ctx.body = '<form method="post" enctype="multipart/form-data"><input type="file" name="file" /><button type="submit">Submit</button></form>';
+    // Rander image or download file
+    let file = await ctx.mongo.collection('fs.files').findOne({_id: mongo.ObjectId(ctx.query.id)});
+
+    ctx.etag = file.md5;
+    ctx.lastModified = file.uploadDate;
+    ctx.status = 200;
+    if(ctx.fresh) {
+      return ctx.status = 304;
+    }
+
+    ctx.type = file.filename;
+    (ctx.query.download || !/^image\/.*$/.test(ctx.type)) && ctx.attachment(file.filename);
+
+    ctx.body = await ctx.mongo.bucket.stream(file._id);
   })
   .use(async (ctx) => {
     ctx.status = 404;
