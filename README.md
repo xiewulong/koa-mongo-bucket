@@ -1,6 +1,6 @@
-# Koa 2 mongo bucket
+# Koa mongo bucket
 
-Koa 2 mongo GridFS bucket instance
+Koa mongo GridFS bucket instance
 
 ## 目录
 
