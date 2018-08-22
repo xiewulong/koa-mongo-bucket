@@ -12,12 +12,12 @@ const uuidv4 = require('uuid/v4');
 
 class Bucket {
 
-  constructor(mongo) {
+  constructor(mongo, db_name) {
     if(!mongo) {
       throw 'Koa mongo is required';
     }
 
-    this.bucket = new mongodb.GridFSBucket(mongo.db());
+    this.bucket = new mongodb.GridFSBucket(mongo.db(db_name));
     mongo.bucket = this;
   }
 
@@ -96,9 +96,10 @@ class Bucket {
 
 }
 
-module.exports = () => {
+module.exports = (db_name) => {
   return async (ctx, next) => {
-    new Bucket(ctx.mongo);
+    new Bucket(ctx.mongo, db_name);
+
     await next();
   };
 };
