@@ -45,7 +45,7 @@ const multer = require('koa-multer');
 
 app
   // ...
-  .use(multer({dest: 'tmp'}).single('file'))
+  .use(multer({ dest: 'tmp' }).single('file'))
   .use(async(ctx, next) => {
     // Upload
     if(ctx.method == 'POST') {
@@ -61,7 +61,7 @@ app
     }
 
     // Rander image or download file
-    let file = await ctx.mongo.collection('fs.files').findOne({_id: mongo.ObjectId(ctx.query.id)});
+    let file = await ctx.mongo.db().collection('fs.files').findOne({ _id: mongo.ObjectId(ctx.query.id) });
 
     ctx.etag = file.md5;
     ctx.lastModified = file.uploadDate;

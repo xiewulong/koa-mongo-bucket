@@ -17,7 +17,7 @@ class Bucket {
       throw 'Koa mongo is required';
     }
 
-    this.bucket = new mongodb.GridFSBucket(mongo);
+    this.bucket = new mongodb.GridFSBucket(mongo.db());
     mongo.bucket = this;
   }
 
@@ -31,20 +31,20 @@ class Bucket {
    * @return {promise}
    */
   upload(file_path, fs_create_read_stream_options, filename, bucket_open_upload_stream_options) {
-    if(!file_path) {
+    if (!file_path) {
       throw 'File\'s upload path is required';
     }
-    if(typeof fs_create_read_stream_options == 'string') {
+    if (typeof fs_create_read_stream_options == 'string') {
       bucket_open_upload_stream_options = filename;
       filename = fs_create_read_stream_options;
       fs_create_read_stream_options = undefined;
     }
-    if(!filename) {
+    if (!filename) {
       filename = uuidv4().replace(/-/g, '');
     }
+
     return new Promise((resolve, reject) => {
-      fs
-        .createReadStream(file_path, fs_create_read_stream_options)
+      fs.createReadStream(file_path, fs_create_read_stream_options)
         .pipe(this.bucket.openUploadStream(filename, bucket_open_upload_stream_options))
         .on('finish', resolve)
         .on('error', reject)
@@ -75,12 +75,11 @@ class Bucket {
     }
 
     return new Promise((resolve, reject) => {
-      this
-        .stream(id, bucket_open_download_stream_options)
-        .pipe(fs.createWriteStream(file_path, fs_create_write_stream_options))
-        .on('finish', resolve)
-        .on('error', reject)
-        ;
+      this.stream(id, bucket_open_download_stream_options)
+          .pipe(fs.createWriteStream(file_path, fs_create_write_stream_options))
+          .on('finish', resolve)
+          .on('error', reject)
+          ;
     });
   }
 
